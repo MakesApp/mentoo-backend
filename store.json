@@ -1,1 +1,22 @@
-[{"email":"dan@test.com","password":"1234"},{"email":"arel@test.com","password":"1234"},{"email":"bob@test.com","password":"1234"},{"email":"nofar@test.com","password":"1234"}]
+[
+    {
+        "email": "dan@test.com",
+        "password": "1234"
+    },
+    {
+        "email": "arel@test.com",
+        "password": "1234"
+    },
+    {
+        "email": "nofar@test.com",
+        "password": "1234"
+    },
+    {
+        "email": "test@test.com",
+        "password": "1234"
+    },
+    {
+        "email": "test1@test.com",
+        "password": "1234"
+    }
+]
