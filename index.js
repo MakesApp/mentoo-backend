@@ -1,6 +1,7 @@
 import express from "express";
 import userRouter from "./components/users/user.routes.js";
 import "./services/DB/mongoose.js";
+import "./services/socket/socket.js";
 
 const app = express();
 app.use(express.json());
