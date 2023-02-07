@@ -1,6 +1,8 @@
 import fs from "fs";
 import Jwt from "jsonwebtoken";
 import bcrypt from "bcrypt"
+import uniqid from 'uniqid';
+
 // import cookieParser from "cookie-parser";
 const secret="mySecret"
 
@@ -19,13 +21,14 @@ export const addUser = async (req, res) => {
     } else {
       const users = data ? JSON.parse(data) : [];
       const hashedPassword = await  bcrypt.hash(req.body.password, 8);
-      console.log(hashedPassword);
+    //   console.log(hashedPassword);
       const userHashed = ({
+        id: uniqid(),
         email: req.body.email,
         password: hashedPassword,
     });
       users.push(userHashed);
-      console.log(users);
+    //   console.log(users);
 
       fs.writeFile("store.json", JSON.stringify(users), function (err) {
         if (err) {

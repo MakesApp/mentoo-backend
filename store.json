@@ -6,5 +6,18 @@
     {
         "email": "test2@test.com",
         "password": "$2b$08$hgBbnguFpLFqNt6UyKN8ROaHIxTl7X9jh5ANEwFIUqenSsfxYPP1W"
+    },
+    {
+        "email": "test3@test.com",
+        "password": "$2b$08$t7hTHXLThFiJ5ZgZXpQdI.RgG.B048YM2CEz0tRAWtZzYOTZE3OpS"
+    },
+    {
+        "email": "test4@test.com",
+        "password": "$2b$08$2ctEHeYS4tY7uZfYC9qohey9zxWYHWeUNM43WDoCVKW3QYXMeGI/m"
+    },
+    {
+        "id": "myrjt3v4ldtxqjmm",
+        "email": "test5@test.com",
+        "password": "$2b$08$Xh2KAkR.1ZDraS9mZvGCfu2w2AJNTH3W5p6.8JBjoyJZbxBIib1qG"
     }
 ]
