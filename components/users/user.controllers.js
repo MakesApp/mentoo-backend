@@ -1,5 +1,6 @@
 import fs from "fs";
 import Jwt from "jsonwebtoken";
+import bcrypt from "bcrypt"
 // import cookieParser from "cookie-parser";
 const secret="mySecret"
 
@@ -8,18 +9,23 @@ const secret="mySecret"
 export const allUsers = async (req, res) => {
     let data = fs.readFileSync('store.json');
     data = JSON.parse(data);
-    console.log(data);
     res.send(data)
 };
 
 export const addUser = async (req, res) => {
-  fs.readFile("store.json", "utf8", function (err, data) {
+  fs.readFile("store.json", "utf8", async function (err, data) {
     if (err) {
       res.status(500).send({ error: "Failed to read file" });
     } else {
       const users = data ? JSON.parse(data) : [];
-      users.push(req.body);
-    //   console.log(users);
+      const hashedPassword = await  bcrypt.hash(req.body.password, 8);
+      console.log(hashedPassword);
+      const userHashed = ({
+        email: req.body.email,
+        password: hashedPassword,
+    });
+      users.push(userHashed);
+      console.log(users);
 
       fs.writeFile("store.json", JSON.stringify(users), function (err) {
         if (err) {
@@ -31,6 +37,11 @@ export const addUser = async (req, res) => {
     }
   });
 };
+
+
+
+
+
 
 export const login = async (req, res) => {
   fs.readFile("store.js", "utf8", function (err, data) {

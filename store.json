@@ -1,22 +1,10 @@
 [
     {
-        "email": "dan@test.com",
-        "password": "1234"
-    },
-    {
-        "email": "arel@test.com",
-        "password": "1234"
-    },
-    {
-        "email": "nofar@test.com",
-        "password": "1234"
-    },
-    {
-        "email": "test@test.com",
-        "password": "1234"
-    },
-    {
         "email": "test1@test.com",
-        "password": "1234"
+        "password": "$2b$08$DuLg.9v5oQzyjI4eYVxfp.UdUxLOlY4iVqE5eLeqwEepBwAgsi9zi"
+    },
+    {
+        "email": "test2@test.com",
+        "password": "$2b$08$hgBbnguFpLFqNt6UyKN8ROaHIxTl7X9jh5ANEwFIUqenSsfxYPP1W"
     }
 ]
