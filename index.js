@@ -1,5 +1,6 @@
 import express from "express";
 import userRouter from "./components/users/user.routes.js";
+import "./services/DB/mongoose.js"
 const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 9000;
