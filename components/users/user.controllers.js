@@ -43,7 +43,7 @@ export const findUserById = async (req, res) => {
 export const allUsers = async (req, res) => {
   const users = await Users.find({});
   try {
-    res.status(200).send(users);
+    res.status(200).send({users:users});
   } catch (err) {
     res.send(err.message);
   }
