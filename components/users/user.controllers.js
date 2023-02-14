@@ -1,76 +1,73 @@
-import fs from "fs";
+import { Users } from "./user.models.js";
 import Jwt from "jsonwebtoken";
-// import cookieParser from "cookie-parser";
-const secret="mySecret"
+import bcrypt from "bcrypt";
 
+export const register = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
+    const userExist = await Users.findOne({ email });
+    if (userExist) {
+      return res.status(409).send("User Already Exist. Please Login");
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new Users({
+        email: req.body.email,
+        password: hashedPassword,
+      });
 
-export const allUsers = async (req, res) => {
-    let data = fs.readFileSync('store.json');
-    data = JSON.parse(data);
-    console.log(data);
-    res.send(data)
+      const savedUser = await user.save();
+      res.status(201).send(savedUser);
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
 };
 
-export const addUser = async (req, res) => {
-  fs.readFile("store.json", "utf8", function (err, data) {
-    if (err) {
-      res.status(500).send({ error: "Failed to read file" });
-    } else {
-      const users = data ? JSON.parse(data) : [];
-      users.push(req.body);
-    //   console.log(users);
+export const findUserById = async (req, res) => {
+  const _id = req.params.id;
 
-      fs.writeFile("store.json", JSON.stringify(users), function (err) {
-        if (err) {
-          res.status(500).send({ error: "Failed to add user" });
-        } else {
-          res.status(200).send({ message: "User added successfully" });
-        }
-      });
+  try {
+    const user = await Users.findById(_id);
+
+    if (!user) {
+      return res.status(404).send();
     }
-  });
+
+    res.send(user);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+export const allUsers = async (req, res) => {
+  const users = await Users.find({});
+  try {
+    res.status(200).send({users:users});
+  } catch (err) {
+    res.send(err.message);
+  }
 };
 
 export const login = async (req, res) => {
-  fs.readFile("store.js", "utf8", function (err, data) {
-    if (err) {
-      res.status(500).send({ error: "Failed to read file" });
-    } else {
-      const users = data ? JSON.parse(data) : [];
-      const user = users.find((u) => u.email === req.body.email);
-      if(!user){
-        res.status(500).send({ error: "Email not found" });
-      }
-      else if(user.password!=req.body.password){
-        res.status(500).send({ error: "incorrect password " });
-      }
-      else{
-       const token=Jwt.sign({email:user.email},secret,{ expiresIn: '1h' })
-       res.status(200).send({ message: "Successfully logged in", token });
+  const { email, password } = req.body;
 
-      }
-    }
-  });
-};
+  const user = await Users.findOne({ email });
+  if (!user) {
+    res.send({ message: "Login failed:  email don't exist, register first" });
+  } else {
+    const matchPassword = await bcrypt.compare(password, user.password);
+    if (matchPassword) {
+      const token = Jwt.sign({ email: email }, process.env.TOKEN_SECRET, {
+        expiresIn: "1h",
+      });
 
-export const authenticate = async (req, res, next) => {
-    const token = req.headers['x-access-token'];
-    if (!token) {
-      res.status(401).send({ error: "No token provided" });
+      res.cookie("token", token, { httpOnly: true });
+      res.status(200).send({ message: "Login successful", user });
     } else {
-      try {
-        const decoded = Jwt.verify(token, secret);
-        req.user = decoded;
-        next(); 
-      } catch (err) {
-        res.status(401).send({ error: "Invalid token" });
-      }
+      res
+        .status(401)
+        .send({ message: "Login failed: Incorrect password" });
     }
-  };
-  export const deleteUser = async (req, res) => {
-    let data = fs.readFileSync('store.json');
-    data = JSON.parse(data);
-    data = data.filter(user => user.email !==  "bob@test.com");
-    fs.writeFileSync('store.json', JSON.stringify(data));
   }
+};

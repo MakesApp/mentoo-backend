@@ -1,22 +1,27 @@
 [
     {
-        "email": "dan@test.com",
-        "password": "1234"
-    },
-    {
-        "email": "arel@test.com",
-        "password": "1234"
-    },
-    {
-        "email": "nofar@test.com",
-        "password": "1234"
-    },
-    {
-        "email": "test@test.com",
-        "password": "1234"
-    },
-    {
+        "id": "myrjt8vcldtxs6ml",
         "email": "test1@test.com",
-        "password": "1234"
+        "password": "$2b$08$WkuF5.0cxMIUPujkCw4ykOHDvsssVAj0.lEEinbbml3H8Toid4.VG"
+    },
+    {
+        "id": "myrjt6bwldtxs9e0",
+        "email": "test2@test.com",
+        "password": "$2b$08$q4q41xplxYc3oH9CctlpmuFnWJQqylOPtuvJVRvTp9M.JW4vN6i0S"
+    },
+    {
+        "id": "myrjt6qgldtxsct6",
+        "email": "test3@test.com",
+        "password": "$2b$08$TDxZJGmnYywJW9wHAvtluOSw8gR5IxMxIwMAwiX8qa8SPF7BZCPpu"
+    },
+    {
+        "id": "myrjtdo8ldtxsfpm",
+        "email": "test4@test.com",
+        "password": "$2b$08$mJNv910i4SMLITQcPr91MeEzga0bsXH/gyY.3XvpMbdbUnsNZoLd."
+    },
+    {
+        "id": "myrjt35cldtxsihq",
+        "email": "test5@test.com",
+        "password": "$2b$08$jeedD4RXCrOyJUb74eQfye1iRVArWG7NTbsB7elWZNRXsmrC8g2AO"
     }
 ]
