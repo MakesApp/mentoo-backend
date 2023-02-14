@@ -18,6 +18,7 @@ export const register = async (req, res) => {
 
       const savedUser = await user.save();
       res.status(201).send(savedUser);
+      console.log(savedUser);
     }
   } catch (e) {
     res.status(400).send(e);
@@ -70,4 +71,5 @@ export const login = async (req, res) => {
         .send({ message: "Login failed: Incorrect password" });
     }
   }
+  
 };
