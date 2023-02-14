@@ -49,7 +49,7 @@ export const allUsers = async (req, res) => {
     res.send(err.message);
   }
 };
-
+console.log("change");
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
