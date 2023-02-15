@@ -4,10 +4,35 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+
     <title>socket client</title>
   </head>
   <body>
-    hello
+    <button>enter room</button>
+    <button class="msg">send message</button>
   </body>
-  <script></script>
+  <script>
+    const enterRoomBtn = document.querySelector("button");
+    const msgBtn = document.querySelector(".msg");
+    const socket = io("http://localhost:8080");
+    const userId = "user-id";
+    const placeId = "place-id";
+
+    enterRoomBtn.addEventListener("click", () => {
+      socket.emit("join", `${userId}-${placeId}`);
+    });
+
+    msgBtn.addEventListener("click", () => {
+      socket.emit("send_message", {
+        msg: "this is the message",
+        userId: "user-id",
+        placeId: "place-id",
+      });
+    });
+
+    socket.on("new_message", (msg) => {
+      console.log(msg);
+    });
+  </script>
 </html>

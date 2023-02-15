@@ -8,6 +8,7 @@ const Message = new Schema(
       type: String,
       required: true,
     },
+    isOpened: { type: Boolean, required: true },
   },
   { timestamps: true }
 );
