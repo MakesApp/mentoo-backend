@@ -25,9 +25,11 @@ io.on("connection", (socket) => {
       `${userId}-${placeId}`
     ).size;
 
+    if (!usersInRoom) return;
+
     if (usersInRoom === 1) {
       addMsgToConversation(userId, placeId, msg, false);
-      new Notification({ sender: userId, reciever: placeId }).save();
+      // new Notification({ sender: userId, reciever: placeId }).save();
     } else if (usersInRoom === 2) {
       addMsgToConversation(userId, placeId, msg, true);
     }
