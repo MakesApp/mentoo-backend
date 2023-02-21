@@ -19,6 +19,7 @@ const Conversation = model(
     placeId: { type: SchemaTypes.ObjectId, ref: Users, required: true },
     userId: { type: SchemaTypes.ObjectId, ref: Users, required: true },
     transcript: [Message],
+    isActive: { type: Boolean, default: false },
   })
 );
 

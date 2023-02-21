@@ -12,3 +12,15 @@ export const getConversations = async (req, res) => {
     res.status(500).send({ message: err });
   }
 };
+
+export const toggleUser = async (req, res) => {
+  const { userId, placeId } = req.params;
+  try {
+    await Conversation.findOneAndUpdate({ userId, placeId }, [
+      { $set: { isActive: { $eq: [false, "$isActive"] } } },
+    ]);
+    res.send();
+  } catch (message) {
+    res.status(500).send({ message });
+  }
+};
