@@ -29,10 +29,8 @@ export const getAllConversations = async (req, res) => {
   const { placeId, userId } = req.query;
   const query = placeId ? "placeId" : "userId";
 
-  let result;
-
   try {
-    result = await Conversation.find(
+    const result = await Conversation.find(
       { [query]: placeId || userId },
       { _id: 1, [query]: 1, lastMsg: { $last: "$transcript" } }
     );
