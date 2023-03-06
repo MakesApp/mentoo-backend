@@ -4,12 +4,14 @@ import { Server } from "socket.io";
 import Notification from "../../components/notifications/notification.model.js";
 import { addMsgToConversation } from "../../utils/utils.js";
 
+import { DEV_CLIENT } from "../../data/urls.js";
+
 const app = express();
 const socketServer = server.createServer(app);
 
 const io = new Server(socketServer, {
   cors: {
-    origin: "*",
+    origin: DEV_CLIENT,
     methods: ["GET", "POST"],
     // credentials: true,
   },
