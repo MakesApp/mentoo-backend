@@ -11,7 +11,7 @@ const io = new Server(socketServer, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
-    // credentials: true,
+    // credentials: true
   },
 });
 
@@ -19,11 +19,10 @@ io.on("connection", (socket) => {
   socket.on("join", (room) => socket.join(room));
 
   socket.on("send_message", ({ userId, placeId, msg }) => {
-    io.sockets.in(`${userId}-${placeId}`).emit("new_message", msg);
+  const roomKey = `${userId}-${placeId}`;
+  const room = io.sockets.adapter.rooms.get(roomKey);
+  const usersInRoom = room ? room.size : 0;
 
-    const usersInRoom = io.sockets.adapter.rooms.get(
-      `${userId}-${placeId}`
-    ).size;
 
     if (!usersInRoom) return;
 
@@ -35,7 +34,7 @@ io.on("connection", (socket) => {
     }
   });
 });
-
-socketServer.listen(8080, (err) => {
-  if (!err) console.log("socket server run on port 8080");
+socketServer.listen(8080, () => {
+  console.log("socket server run on port 8080");
 });
+

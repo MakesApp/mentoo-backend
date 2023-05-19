@@ -1,10 +1,11 @@
 import express from "express";
-import userRouter from "./components/users/user.routes.js";
-import conversationRouter from "./components/conversations/conversation.routes.js";
-import notificationRouter from "./components/notifications/notifications.routes.js";
-import "./services/DB/mongoose.js";
-import "./services/socket/socket.js";
+import userRouter from "./src/components/users/user.routes";
+import conversationRouter from "./src/components/conversations/conversation.routes";
+import notificationRouter from "./src/components/notifications/notifications.routes";
+import "./src/services/DB/mongoose";
+import "./src/services/socket/socket";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const PORT = process.env.PORT || 9000;
@@ -16,7 +17,7 @@ app.use("/api", userRouter);
 app.use("/api", conversationRouter);
 app.use("/api", notificationRouter);
 
-app.get("/", (req, res) => {
+app.get("/", (req: express.Request, res: express.Response) => {
   res.send("Hello World!");
 });
 
