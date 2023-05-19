@@ -57,8 +57,9 @@ const login = async (req, res) => {
                 const token = jsonwebtoken_1.default.sign({ email }, jwtConfig_1.jwtSecret, {
                     expiresIn: "1h",
                 });
+                const modifiedUser = { ...user.toObject(), password: undefined };
                 res.cookie("token", token, { httpOnly: true });
-                res.status(200).send({ message: "Login successful", user });
+                res.status(200).send({ message: "Login successful", user: modifiedUser });
             }
             else {
                 res.status(401).send({ message: "Login failed: Incorrect password" });

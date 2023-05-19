@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import User  from "./user.models";
+import User, { IUser }  from "./user.models";
 import { jwtSecret } from "../../config/jwtConfig";
 
 export const register = async (req: Request, res: Response) => {
@@ -60,9 +60,11 @@ export const login = async (req: Request, res: Response) => {
         const token = jwt.sign({ email }, jwtSecret, {
           expiresIn: "1h",
         });
+        const modifiedUser = { ...user.toObject(), password: undefined };
 
-        res.cookie("token", token, { httpOnly: true });
-        res.status(200).send({ message: "Login successful", user });
+
+       res.cookie("token", token, { httpOnly: true });
+        res.status(200).send({ message: "Login successful", user:modifiedUser });
       } else {
         res.status(401).send({ message: "Login failed: Incorrect password" });
       }
