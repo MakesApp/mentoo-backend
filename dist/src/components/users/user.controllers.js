@@ -13,11 +13,11 @@ const register = async (req, res) => {
     try {
         // Check if the email is already registered
         if (!email || !password) {
-            return res.status(409).json({ error: "Missing Credentials" });
+            return res.status(409).json({ error: "אחד השדות חסר" });
         }
         const existingUser = await user_models_1.default.findOne({ email });
         if (existingUser) {
-            return res.status(409).json({ error: "Email already registered" });
+            return res.status(409).json({ error: "איימיל זה כבר קיים במערכת" });
         }
         // Hash the password
         const hashedPassword = await bcrypt_1.default.hash(password, 10);
@@ -34,11 +34,11 @@ const register = async (req, res) => {
         });
         // Set the token as a cookie
         res.cookie("token", token, { httpOnly: true, secure: true });
-        res.status(201).json({ user: savedUser, message: "Registration successful" });
+        res.status(201).json({ user: savedUser, message: "ההרשמה בוצעה בהצלחה" });
     }
     catch (error) {
         console.error("Registration error:", error);
-        res.status(500).json({ error: "Registration failed" });
+        res.status(500).json({ error: "ההרשמה נכשלה" });
     }
 };
 exports.register = register;
@@ -48,7 +48,7 @@ const login = async (req, res) => {
         const user = await user_models_1.default.findOne({ email });
         if (!user) {
             res.send({
-                message: "Login failed: email doesn't exist, register first",
+                message: "ההתחברות נכשלה: איימיל לא קיים , צריך להירשם",
             });
         }
         else {
@@ -58,17 +58,16 @@ const login = async (req, res) => {
                     expiresIn: "1h",
                 });
                 const modifiedUser = { ...user.toObject(), password: undefined };
-                res.cookie("token", token, { httpOnly: true });
-                res.status(200).send({ message: "Login successful", user: modifiedUser });
+                res.status(200).send({ message: "ההתחברות בוצעה בהצלחה", user: modifiedUser, token });
             }
             else {
-                res.status(401).send({ message: "Login failed: Incorrect password" });
+                res.status(401).send({ message: "ההתחברות נכשלה :סיסמה שגויה" });
             }
         }
     }
     catch (error) {
         console.error("Login error:", error);
-        res.status(500).json({ error: "Login failed" });
+        res.status(500).json({ error: "ההתחברות נכשלה" });
     }
 };
 exports.login = login;

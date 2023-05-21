@@ -13,6 +13,19 @@ const PORT = process.env.PORT || 9000;
 const app = express();
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Expose-Headers', 'Content-Length');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Accept, Authorization, Content-Type, X-Requested-With, Range'
+  );
+  next();
+});
+
+
 app.use("/api", userRouter);
 app.use("/api", conversationRouter);
 app.use("/api", notificationRouter);
