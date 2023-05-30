@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const validator_1 = __importDefault(require("validator"));
 const userSchema = new mongoose_1.default.Schema({
     email: {
         type: String,
@@ -13,10 +12,6 @@ const userSchema = new mongoose_1.default.Schema({
         unique: true,
         lowercase: true,
         match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
-        validate: {
-            validator: (value) => validator_1.default.isEmail(value),
-            message: "Email is invalid",
-        },
     },
     password: {
         type: String,
@@ -28,6 +23,14 @@ const userSchema = new mongoose_1.default.Schema({
             message: 'Password cannot contain "password"',
         },
     },
+    role: {
+        type: String,
+        enum: ['volunteer', 'place'], // Only 'volunteer' or 'place' allowed
+    },
+    avatar: {
+        type: String,
+        default: '' // Default value if none is provided
+    }
 });
 const User = mongoose_1.default.model("Users", userSchema);
 exports.default = User;

@@ -10,10 +10,12 @@ const notifications_routes_1 = __importDefault(require("./src/components/notific
 require("./src/services/DB/mongoose");
 require("./src/services/socket/socket");
 const dotenv_1 = __importDefault(require("dotenv"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 dotenv_1.default.config();
 const PORT = process.env.PORT || 9000;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use((0, cookie_parser_1.default)());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
     res.header('Access-Control-Allow-Credentials', 'true');

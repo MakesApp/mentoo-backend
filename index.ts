@@ -5,13 +5,16 @@ import notificationRouter from "./src/components/notifications/notifications.rou
 import "./src/services/DB/mongoose";
 import "./src/services/socket/socket";
 import dotenv from "dotenv";
-
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 const PORT = process.env.PORT || 9000;
 
 const app = express();
+
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');

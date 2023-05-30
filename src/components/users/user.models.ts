@@ -4,6 +4,8 @@ import validator from "validator";
 export interface IUser extends Document {
   email: string;
   password: string;
+  role:string;
+  avatar:string;
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema<IUser>({
@@ -14,10 +16,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema<IUser>({
     unique: true,
     lowercase: true,
     match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: "Email is invalid",
-    },
   },
   password: {
     type: String,
@@ -29,6 +27,14 @@ const userSchema: Schema<IUser> = new mongoose.Schema<IUser>({
       message: 'Password cannot contain "password"',
     },
   },
+   role: {
+    type: String,
+    enum: ['volunteer', 'place'], // Only 'volunteer' or 'place' allowed
+  },
+  avatar: {
+    type: String,
+    default: '' // Default value if none is provided
+  }
 });
 
 const User = mongoose.model<IUser>("Users", userSchema);
