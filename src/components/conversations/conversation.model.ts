@@ -1,5 +1,4 @@
 import { Schema, model, Types, Document } from "mongoose";
-import { IUser } from "../users/user.models";
 
 interface IMessage extends Document {
   sender: Schema.Types.ObjectId;

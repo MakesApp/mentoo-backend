@@ -103,7 +103,6 @@ export const login = async (req: Request, res: Response) => {
 
 export const getUser = async (req, res: Response): Promise<void> => {
   const { userId } = req.user;
-  console.log(req.user);
   
 
   try {
@@ -122,5 +121,17 @@ export const getUser = async (req, res: Response): Promise<void> => {
   } catch(err) {
     console.error(err);
     res.status(500).json({ message: 'Error fetching user' });
+  }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    // Clear the token cookie
+    res.clearCookie("token");
+
+    res.status(200).json({ message: "התנתקות בוצעה בהצלחה" }); // Logged out successfully
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ error: "התנתקות נכשלה" }); // Logout failed
   }
 };

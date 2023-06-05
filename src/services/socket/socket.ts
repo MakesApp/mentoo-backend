@@ -16,7 +16,6 @@ const io = new Server(socketServer, {
 });
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
 
     // Join a room
      socket.on('join room', (room) => {
@@ -36,13 +35,10 @@ io.on('connection', (socket) => {
 
     // Forward a chat message to all users in the room
     socket.on('chat message', (msg, room) => {
-        console.log('message: ', msg);
-        console.log('room: ', room);
         socket.to(room).emit('chat message', msg);
     });
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
     });
 });
 socketServer.listen(8080, () => {

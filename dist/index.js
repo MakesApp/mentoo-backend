@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const user_routes_1 = __importDefault(require("./src/components/users/user.routes"));
 const conversation_routes_1 = __importDefault(require("./src/components/conversations/conversation.routes"));
 const notifications_routes_1 = __importDefault(require("./src/components/notifications/notifications.routes"));
+const place_routes_1 = __importDefault(require("./src/components/places/place.routes"));
 require("./src/services/DB/mongoose");
 require("./src/services/socket/socket");
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use("/api", user_routes_1.default);
+app.use("/api", place_routes_1.default);
 app.use("/api", conversation_routes_1.default);
 app.use("/api", notifications_routes_1.default);
 app.get("/", (req, res) => {

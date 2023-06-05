@@ -2,6 +2,7 @@ import express from "express";
 import userRouter from "./src/components/users/user.routes";
 import conversationRouter from "./src/components/conversations/conversation.routes";
 import notificationRouter from "./src/components/notifications/notifications.routes";
+import placeRouter from './src/components/places/place.routes'
 import "./src/services/DB/mongoose";
 import "./src/services/socket/socket";
 import dotenv from "dotenv";
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 
 
 app.use("/api", userRouter);
+app.use("/api", placeRouter);
 app.use("/api", conversationRouter);
 app.use("/api", notificationRouter);
 

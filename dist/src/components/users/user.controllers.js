@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUser = exports.login = exports.register = void 0;
+exports.logout = exports.getUser = exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_models_1 = __importDefault(require("./user.models"));
@@ -92,7 +92,6 @@ const login = async (req, res) => {
 exports.login = login;
 const getUser = async (req, res) => {
     const { userId } = req.user;
-    console.log(req.user);
     try {
         const user = await user_models_1.default.findById(userId);
         if (!user) {
@@ -110,3 +109,15 @@ const getUser = async (req, res) => {
     }
 };
 exports.getUser = getUser;
+const logout = async (req, res) => {
+    try {
+        // Clear the token cookie
+        res.clearCookie("token");
+        res.status(200).json({ message: "התנתקות בוצעה בהצלחה" }); // Logged out successfully
+    }
+    catch (error) {
+        console.error("Logout error:", error);
+        res.status(500).json({ error: "התנתקות נכשלה" }); // Logout failed
+    }
+};
+exports.logout = logout;
