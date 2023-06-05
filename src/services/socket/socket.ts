@@ -15,24 +15,35 @@ const io = new Server(socketServer, {
   },
 });
 
-io.on("connection", (socket) => {
-  socket.on("join", (room) => socket.join(room));
+io.on('connection', (socket) => {
+    console.log('a user connected');
 
-  socket.on("send_message", ({ userId, placeId, msg }) => {
-  const roomKey = `${userId}-${placeId}`;
-  const room = io.sockets.adapter.rooms.get(roomKey);
-  const usersInRoom = room ? room.size : 0;
+    // Join a room
+     socket.on('join room', (room) => {
+        const userIds = room.split('_');
+        if (userIds[0] === userIds[1]) {
+            console.log('A user attempted to chat with themselves.');
+        } else {
+            socket.join(room);
+        }
+    });
 
 
-    if (!usersInRoom) return;
+    // Leave a room
+    socket.on('leave room', (room) => {
+        socket.leave(room);
+    });
 
-    if (usersInRoom === 1) {
-      addMsgToConversation(userId, placeId, msg, false);
-      // new Notification({ sender: userId, reciever: placeId }).save();
-    } else if (usersInRoom === 2) {
-      addMsgToConversation(userId, placeId, msg, true);
-    }
-  });
+    // Forward a chat message to all users in the room
+    socket.on('chat message', (msg, room) => {
+        console.log('message: ', msg);
+        console.log('room: ', room);
+        socket.to(room).emit('chat message', msg);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
 });
 socketServer.listen(8080, () => {
   console.log("socket server run on port 8080");
