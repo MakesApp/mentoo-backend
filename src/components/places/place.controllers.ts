@@ -16,7 +16,11 @@ export const getPlaces = async (req: Request, res: Response) => {
 export const getPlaceById=async (req: Request, res: Response) => {
   try{
     const {placeId}=req.params;
-    const place=await Place.findById(placeId).populate('agentId').exec();
+    const place=await Place.findById(placeId).populate('agentId')
+      .populate('myVolunteers')
+      .populate('candidateVolunteers')
+      .populate('oldVolunteers')
+      .exec();
     res.status(201).json({ place});
   }
   catch(error){
@@ -25,3 +29,21 @@ export const getPlaceById=async (req: Request, res: Response) => {
 
   }
 };
+
+export const updateVolunteerList=async (req: Request, res: Response) => {
+  const {placeId}=req.params;
+  const {query}=req.body;
+  try{
+
+  const updatedDoc=  await Place.findByIdAndUpdate(placeId,query,{new:true})
+
+      res.status(201).json({ place:updatedDoc});
+
+  }
+
+  catch(error){
+    console.error("Updating place Error :", error);
+    res.status(500).json({ error: "כשל בעדכון הנתונים" });
+
+  }
+}

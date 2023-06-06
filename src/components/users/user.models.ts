@@ -45,6 +45,8 @@ const userSchema: Schema<IUser> = new mongoose.Schema<IUser>({
   },
   placeId:{
     type: Schema.Types.ObjectId,
+    ref: 'Place',
+
     // No default value, it will be undefined if not provided
   }
 });

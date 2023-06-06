@@ -8,11 +8,11 @@ const placeSchema = new mongoose_1.default.Schema({
     placeName: {
         type: String,
         required: true,
-        trim: true, // remove leading and trailing spaces
+        trim: true,
     },
     availableDays: {
         type: [String],
-        default: [] // default is an empty array
+        default: []
     },
     address: {
         type: String,
@@ -34,8 +34,23 @@ const placeSchema = new mongoose_1.default.Schema({
     },
     agentId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: 'User' // reference to the User schema
-    }
+        ref: 'User'
+    },
+    myVolunteers: {
+        type: [mongoose_1.default.Schema.Types.ObjectId],
+        ref: 'User',
+        default: []
+    },
+    candidateVolunteers: {
+        type: [mongoose_1.default.Schema.Types.ObjectId],
+        ref: 'User',
+        default: []
+    },
+    oldVolunteers: {
+        type: [mongoose_1.default.Schema.Types.ObjectId],
+        ref: 'User',
+        default: []
+    },
 });
 const Place = mongoose_1.default.model("Place", placeSchema);
 exports.default = Place;

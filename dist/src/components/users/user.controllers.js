@@ -64,7 +64,7 @@ const login = async (req, res) => {
         // if (usersInAirtable.length === 0) {
         //   return res.status(409).json({ message: "איימיל זה לא קיים במאגר המתנדבים" });
         // }
-        const user = await user_models_1.default.findOne({ email });
+        const user = await user_models_1.default.findOne({ email }).populate('placeId');
         if (!user) {
             res.status(400).send({
                 message: "ההתחברות נכשלה: איימיל לא קיים , צריך להירשם",
@@ -93,7 +93,28 @@ exports.login = login;
 const getUser = async (req, res) => {
     const { userId } = req.user;
     try {
-        const user = await user_models_1.default.findById(userId);
+        const user = await user_models_1.default.findById(userId)
+            .populate({
+            path: 'placeId',
+            model: 'Place',
+            populate: [
+                {
+                    path: 'myVolunteers',
+                    model: 'User',
+                    select: '-password'
+                },
+                {
+                    path: 'candidateVolunteers',
+                    model: 'User',
+                    select: '-password'
+                },
+                {
+                    path: 'oldVolunteers',
+                    model: 'User',
+                    select: '-password'
+                }
+            ]
+        });
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;

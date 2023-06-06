@@ -63,6 +63,7 @@ const userSchema = new mongoose_1.default.Schema({
     },
     placeId: {
         type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'Place',
         // No default value, it will be undefined if not provided
     }
 });

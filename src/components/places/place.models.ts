@@ -7,18 +7,21 @@ export interface IPlace extends Document {
   description: string;
   audience: string;
   placeImage?: string;
-  agentId:Schema.Types.ObjectId;
+  agentId: Schema.Types.ObjectId;
+  myVolunteers: Schema.Types.ObjectId[];
+  candidateVolunteers: Schema.Types.ObjectId[];
+  oldVolunteers: Schema.Types.ObjectId[];
 }
 
 const placeSchema: Schema<IPlace> = new mongoose.Schema<IPlace>({
-   placeName: {
+  placeName: {
     type: String,
-    required: true, // placeName is required
-    trim: true, // remove leading and trailing spaces
+    required: true, 
+    trim: true,
   },
   availableDays: {
-    type: [String], // an array of strings
-    default: [] // default is an empty array
+    type: [String],
+    default: [] 
   },
   address:{
     type: String,
@@ -40,8 +43,23 @@ const placeSchema: Schema<IPlace> = new mongoose.Schema<IPlace>({
   },
   agentId:{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User' // reference to the User schema
-  }
+    ref: 'User' 
+  },
+  myVolunteers:{
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    default: [] 
+  },
+  candidateVolunteers:{
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    default: [] 
+  },
+  oldVolunteers:{
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    default: [] 
+  },
 });
 
 const Place = mongoose.model<IPlace>("Place", placeSchema);
