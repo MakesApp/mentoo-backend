@@ -7,7 +7,7 @@ exports.updateVolunteerList = exports.getPlaceById = exports.getPlaces = void 0;
 const place_models_1 = __importDefault(require("./place.models"));
 const getPlaces = async (req, res) => {
     try {
-        const places = await place_models_1.default.find({}).populate('agentId').exec();
+        const places = await place_models_1.default.find({}).exec();
         res.status(201).json({ places });
     }
     catch (error) {
@@ -19,10 +19,7 @@ exports.getPlaces = getPlaces;
 const getPlaceById = async (req, res) => {
     try {
         const { placeId } = req.params;
-        const place = await place_models_1.default.findById(placeId).populate('agentId')
-            .populate('myVolunteers')
-            .populate('candidateVolunteers')
-            .populate('oldVolunteers')
+        const place = await place_models_1.default.findById(placeId)
             .exec();
         res.status(201).json({ place });
     }

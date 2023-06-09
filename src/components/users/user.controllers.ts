@@ -74,7 +74,7 @@ export const login = async (req: Request, res: Response) => {
     // if (usersInAirtable.length === 0) {
     //   return res.status(409).json({ message: "איימיל זה לא קיים במאגר המתנדבים" });
     // }
-    const user = await User.findOne({ email }).populate('placeId');
+    const user = await User.findOne({ email });
     if (!user) {
        res.status(400).send({
         message: "ההתחברות נכשלה: איימיל לא קיים , צריך להירשם",
@@ -106,29 +106,8 @@ export const getUser = async (req, res: Response): Promise<void> => {
   
 
   try {
-const user = await User.findById(userId)
-  .populate({
-    path: 'placeId',
-    model: 'Place',
-    populate: [
-      {
-        path: 'myVolunteers',
-        model: 'User',
-        select: '-password'
-      },
-      {
-        path: 'candidateVolunteers',
-        model: 'User',
-        select: '-password'
-      },
-      {
-        path: 'oldVolunteers',
-        model: 'User',
-        select: '-password'
-      }
-    ]
-  });
-
+  const user = await User.findById(userId)
+ 
 
     if (!user) {
       res.status(404).json({ message: 'User not found' });
@@ -157,3 +136,19 @@ export const logout = async (req: Request, res: Response) => {
     res.status(500).json({ error: "התנתקות נכשלה" }); // Logout failed
   }
 };
+
+export const getListOfUsers= async (req: Request, res: Response) => {
+  const {list}=req.body;
+  
+  try{
+
+    const users=await Promise.all(list.map(async user=>await User.findById(user)))
+    res.status(200).json({ users})
+
+  }
+  catch(error){
+    console.error("Fetching users error:", error);
+    res.status(500).json({ error: "כשל במשיכת הנתונים" }); // Logout failed
+
+  }
+}

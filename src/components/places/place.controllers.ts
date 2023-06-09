@@ -5,7 +5,7 @@ import Place from "./place.models";
 export const getPlaces = async (req: Request, res: Response) => {
   try{
       
-    const places=await Place.find({}).populate('agentId').exec();
+    const places=await Place.find({}).exec();
     res.status(201).json({ places});
   } catch (error) {
     console.error("Fetching places Error :", error);
@@ -16,10 +16,7 @@ export const getPlaces = async (req: Request, res: Response) => {
 export const getPlaceById=async (req: Request, res: Response) => {
   try{
     const {placeId}=req.params;
-    const place=await Place.findById(placeId).populate('agentId')
-      .populate('myVolunteers')
-      .populate('candidateVolunteers')
-      .populate('oldVolunteers')
+    const place=await Place.findById(placeId)
       .exec();
     res.status(201).json({ place});
   }

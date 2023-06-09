@@ -1,12 +1,12 @@
-import { Schema, model, Types, Document } from "mongoose";
+import mongoose, { Schema, model, Types, Document } from "mongoose";
 
 interface IMessage extends Document {
-  sender: Schema.Types.ObjectId;
+  sender: mongoose.Types.ObjectId;
   message: string;
   isOpened: boolean;
 }
 
-const messageSchema: Schema<IMessage> = new Schema<IMessage>(
+ const messageSchema: Schema<IMessage> = new Schema<IMessage>(
   {
     sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
     message: {
@@ -19,19 +19,22 @@ const messageSchema: Schema<IMessage> = new Schema<IMessage>(
 );
 
 interface IConversation extends Document {
-  placeId: Schema.Types.ObjectId;
+  placeUserId: Schema.Types.ObjectId;
   userId: Schema.Types.ObjectId;
   transcript: IMessage[];
   isActive: boolean;
+  room:string;
 }
 
 const conversationSchema: Schema<IConversation> = new Schema<IConversation>({
-  placeId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  room:{type:String,required:true},
+  placeUserId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   transcript: [messageSchema],
   isActive: { type: Boolean, default: false },
 });
 
 const Conversation = model<IConversation>("Conversation", conversationSchema);
+export const Message = model<IMessage>("Message", messageSchema);
 
 export default Conversation;

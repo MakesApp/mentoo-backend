@@ -1,9 +1,9 @@
 import express from "express";
 import server from "http";
 import { Server } from "socket.io";
-import Notification from "../../components/notifications/notification.model.js";
-import { addMsgToConversation } from "../../utils/utils.js";
+import Conversation, { Message } from "../../components/conversations/conversation.model";
 
+import mongoose, { Schema } from 'mongoose'
 const app = express();
 const socketServer = server.createServer(app);
 
@@ -17,26 +17,40 @@ const io = new Server(socketServer, {
 
 io.on('connection', (socket) => {
 
-    // Join a room
-     socket.on('join room', (room) => {
-        const userIds = room.split('_');
-        if (userIds[0] === userIds[1]) {
-            console.log('A user attempted to chat with themselves.');
-        } else {
-            socket.join(room);
-        }
+    
+  // Join a room
+  socket.on('join room', async(room) => {
+    socket.join(room);
+
+    // Fetch and send all messages from this room
+    const conversation = await Conversation.findOne({ room }).populate('transcript.sender');
+    if (conversation) {
+      // Emit chat history to the user
+      socket.emit('chat history', conversation.transcript);
+    }
+  });
+
+  // Handle a new chat message
+  socket.on('chat message', async (msg, room) => {
+    let conversation = await Conversation.findOne({ room });
+    if (!conversation) {
+      // If the conversation does not exist, create it
+      conversation = new Conversation({ room, transcript: [], placeUserId: msg.user, userId: msg.user });
+    }
+
+    const newMessage = new Message({
+      sender: new mongoose.Types.ObjectId(msg.user),
+      message: msg.message,
+      isOpened: false,
     });
 
+    // Add the new message to the transcript
+    conversation.transcript.push(newMessage);
+    await conversation.save();
 
-    // Leave a room
-    socket.on('leave room', (room) => {
-        socket.leave(room);
-    });
-
-    // Forward a chat message to all users in the room
-    socket.on('chat message', (msg, room) => {
-        socket.to(room).emit('chat message', msg);
-    });
+    // Emit the new message to all users in the room
+    io.to(room).emit('chat message', msg);
+  });
 
     socket.on('disconnect', () => {
     });

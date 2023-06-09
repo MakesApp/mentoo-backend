@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.getUser = exports.login = exports.register = void 0;
+exports.getListOfUsers = exports.logout = exports.getUser = exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_models_1 = __importDefault(require("./user.models"));
@@ -64,7 +64,7 @@ const login = async (req, res) => {
         // if (usersInAirtable.length === 0) {
         //   return res.status(409).json({ message: "איימיל זה לא קיים במאגר המתנדבים" });
         // }
-        const user = await user_models_1.default.findOne({ email }).populate('placeId');
+        const user = await user_models_1.default.findOne({ email });
         if (!user) {
             res.status(400).send({
                 message: "ההתחברות נכשלה: איימיל לא קיים , צריך להירשם",
@@ -93,28 +93,7 @@ exports.login = login;
 const getUser = async (req, res) => {
     const { userId } = req.user;
     try {
-        const user = await user_models_1.default.findById(userId)
-            .populate({
-            path: 'placeId',
-            model: 'Place',
-            populate: [
-                {
-                    path: 'myVolunteers',
-                    model: 'User',
-                    select: '-password'
-                },
-                {
-                    path: 'candidateVolunteers',
-                    model: 'User',
-                    select: '-password'
-                },
-                {
-                    path: 'oldVolunteers',
-                    model: 'User',
-                    select: '-password'
-                }
-            ]
-        });
+        const user = await user_models_1.default.findById(userId);
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;
@@ -142,3 +121,15 @@ const logout = async (req, res) => {
     }
 };
 exports.logout = logout;
+const getListOfUsers = async (req, res) => {
+    const { list } = req.body;
+    try {
+        const users = await Promise.all(list.map(async (user) => await user_models_1.default.findById(user)));
+        res.status(200).json({ users });
+    }
+    catch (error) {
+        console.error("Fetching users error:", error);
+        res.status(500).json({ error: "כשל במשיכת הנתונים" }); // Logout failed
+    }
+};
+exports.getListOfUsers = getListOfUsers;

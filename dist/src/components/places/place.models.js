@@ -32,7 +32,7 @@ const placeSchema = new mongoose_1.default.Schema({
     placeImage: {
         type: String,
     },
-    agentId: {
+    userId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'User'
     },
