@@ -12,7 +12,7 @@ const messageSchema = new mongoose_1.Schema({
 }, { timestamps: true });
 const conversationSchema = new mongoose_1.Schema({
     room: { type: String, required: true },
-    placeUserId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+    partnerId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
     transcript: [messageSchema],
     isActive: { type: Boolean, default: false },

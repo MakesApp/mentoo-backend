@@ -19,7 +19,7 @@ interface IMessage extends Document {
 );
 
 interface IConversation extends Document {
-  placeUserId: Schema.Types.ObjectId;
+  partnerId: Schema.Types.ObjectId;
   userId: Schema.Types.ObjectId;
   transcript: IMessage[];
   isActive: boolean;
@@ -28,7 +28,7 @@ interface IConversation extends Document {
 
 const conversationSchema: Schema<IConversation> = new Schema<IConversation>({
   room:{type:String,required:true},
-  placeUserId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  partnerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   transcript: [messageSchema],
   isActive: { type: Boolean, default: false },

@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
     socket.join(room);
 
     // Fetch and send all messages from this room
-    const conversation = await Conversation.findOne({ room }).populate('transcript.sender');
+    const conversation = await Conversation.findOne({ room });
     if (conversation) {
       // Emit chat history to the user
       socket.emit('chat history', conversation.transcript);
@@ -35,15 +35,18 @@ io.on('connection', (socket) => {
     let conversation = await Conversation.findOne({ room });
     if (!conversation) {
       // If the conversation does not exist, create it
-      conversation = new Conversation({ room, transcript: [], placeUserId: msg.user, userId: msg.user });
+      conversation = new Conversation({ room, transcript: [], partnerId: msg.partnerId, userId: msg.sender });
     }
+    console.log(msg);
+    
 
     const newMessage = new Message({
-      sender: new mongoose.Types.ObjectId(msg.user),
+      sender: new mongoose.Types.ObjectId(msg.sender),
       message: msg.message,
       isOpened: false,
     });
 
+    
     // Add the new message to the transcript
     conversation.transcript.push(newMessage);
     await conversation.save();
