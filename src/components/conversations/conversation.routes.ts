@@ -1,14 +1,15 @@
 import { Router } from "express";
+import authMiddleware from "../../auth/authMiddleWare.js";
 import {
   getConversation,
   toggleUser,
-  getAllConversations,
+  getChatPartners,
 } from "./conversation.controllers.js";
 
 const conversationRouter = Router();
 
 conversationRouter.get("/conversation", getConversation);
-conversationRouter.get("/conversations", getAllConversations);
+conversationRouter.get("/conversation/getChatPartners", authMiddleware,getChatPartners);
 conversationRouter.get("/conversations/active/:userId/:placeId", toggleUser);
 
 export default conversationRouter;

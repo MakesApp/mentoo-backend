@@ -4,6 +4,8 @@ import { Request, Response } from "express";
 import User, { IUser }  from "./user.models";
 import { jwtSecret } from "../../config/jwtConfig";
 import { base } from "../../services/Airtable/AirtableConfig";
+import mongoose from "mongoose";
+import Conversation from "../conversations/conversation.model";
 
 
 
@@ -150,5 +152,32 @@ export const getListOfUsers= async (req: Request, res: Response) => {
     console.error("Fetching users error:", error);
     res.status(500).json({ error: "כשל במשיכת הנתונים" }); // Logout failed
 
+  }
+}
+
+export const checkUnreadMessages = async (req, res: Response) => {
+  try {
+    // Extract user ID, modify this based on your authentication setup
+    const userId: mongoose.Types.ObjectId = req.user.userId;
+
+    // Find a conversation where the user is a participant, they are not the sender,
+    // and they have not seen the message
+    const conversation = await Conversation.findOne({
+      users: userId,
+      transcript: {
+        $elemMatch: {
+          sender: { $ne: userId },
+          seenBy: { $ne: userId }
+        }
+      }
+    });
+
+    // If such a conversation exists, the user has unread messages
+    const hasUnreadMessages = Boolean(conversation);
+    return res.status(201).json({hasUnreadMessages});
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
 }

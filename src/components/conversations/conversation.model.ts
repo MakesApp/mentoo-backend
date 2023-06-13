@@ -1,35 +1,36 @@
 import mongoose, { Schema, model, Types, Document } from "mongoose";
 
 interface IMessage extends Document {
+  _id: mongoose.Types.ObjectId;
   sender: mongoose.Types.ObjectId;
   message: string;
-  isOpened: boolean;
+  seenBy: mongoose.Types.ObjectId | null;
 }
 
- const messageSchema: Schema<IMessage> = new Schema<IMessage>(
+const messageSchema: Schema<IMessage> = new Schema<IMessage>(
   {
+    _id: { type: Schema.Types.ObjectId },
     sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
     message: {
       type: String,
       required: true,
     },
-    isOpened: { type: Boolean, required: true },
+    seenBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
   { timestamps: true }
 );
 
+
 interface IConversation extends Document {
-  partnerId: Schema.Types.ObjectId;
-  userId: Schema.Types.ObjectId;
+  users: Schema.Types.ObjectId[];
   transcript: IMessage[];
   isActive: boolean;
   room:string;
 }
 
 const conversationSchema: Schema<IConversation> = new Schema<IConversation>({
-  room:{type:String,required:true},
-  partnerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  room:{type:String,required:true,unique:true},
+  users: { type: [Schema.Types.ObjectId], ref: "User", required: true },
   transcript: [messageSchema],
   isActive: { type: Boolean, default: false },
 });

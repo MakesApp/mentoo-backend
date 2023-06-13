@@ -41,11 +41,23 @@ const io = new socket_io_1.Server(socketServer, {
     },
 });
 io.on('connection', (socket) => {
-    // Join a room
-    socket.on('join room', async (room) => {
+    socket.on('join room', async (room, userId, partnerId) => {
         socket.join(room);
+        let conversation = await conversation_model_1.default.findOne({ room });
+        if (!conversation) {
+            // If the conversation does not exist, create it
+            conversation = new conversation_model_1.default({ room, transcript: [], users: [userId, partnerId] }); // Add partnerId to the users array
+            await conversation.save();
+        }
+        else {
+            // If the conversation already exists and the user is not in it, add the user
+            if (!conversation.users.includes(userId)) {
+                conversation.users.push(userId);
+                await conversation.save();
+            }
+        }
         // Fetch and send all messages from this room
-        const conversation = await conversation_model_1.default.findOne({ room });
+        // You don't need to fetch conversation again as it's already fetched above
         if (conversation) {
             // Emit chat history to the user
             socket.emit('chat history', conversation.transcript);
@@ -54,21 +66,38 @@ io.on('connection', (socket) => {
     // Handle a new chat message
     socket.on('chat message', async (msg, room) => {
         let conversation = await conversation_model_1.default.findOne({ room });
-        if (!conversation) {
-            // If the conversation does not exist, create it
-            conversation = new conversation_model_1.default({ room, transcript: [], partnerId: msg.partnerId, userId: msg.sender });
+        if (conversation) { // Add this check to ensure conversation is not null
+            const newMessage = new conversation_model_1.Message({
+                _id: new mongoose_1.default.Types.ObjectId(),
+                sender: new mongoose_1.default.Types.ObjectId(msg.sender),
+                message: msg.message,
+            });
+            // Add the new message to the transcript
+            conversation.transcript.push(newMessage);
+            await conversation.save();
+            // Emit the new message to all users in the room
+            io.to(room).emit('chat message', msg);
         }
-        console.log(msg);
-        const newMessage = new conversation_model_1.Message({
-            sender: new mongoose_1.default.Types.ObjectId(msg.sender),
-            message: msg.message,
-            isOpened: false,
-        });
-        // Add the new message to the transcript
-        conversation.transcript.push(newMessage);
-        await conversation.save();
-        // Emit the new message to all users in the room
-        io.to(room).emit('chat message', msg);
+    });
+    socket.on('messages seen', async (messageIds, room, userId) => {
+        try {
+            const conversation = await conversation_model_1.default.findOne({ room });
+            if (conversation) {
+                messageIds.forEach(messageId => {
+                    const message = conversation.transcript.find((msg) => msg._id.toString() === messageId);
+                    if (message && !message.seenBy) {
+                        // Set the seenBy field to the user's ID
+                        message.seenBy = new mongoose_1.default.Types.ObjectId(userId);
+                    }
+                });
+                await conversation.save();
+                // Emit the updated message to all users in the room
+                io.to(room).emit('messages seen', messageIds);
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
     });
     socket.on('disconnect', () => {
     });

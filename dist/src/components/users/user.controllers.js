@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getListOfUsers = exports.logout = exports.getUser = exports.login = exports.register = void 0;
+exports.checkUnreadMessages = exports.getListOfUsers = exports.logout = exports.getUser = exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_models_1 = __importDefault(require("./user.models"));
 const jwtConfig_1 = require("../../config/jwtConfig");
 const AirtableConfig_1 = require("../../services/Airtable/AirtableConfig");
+const conversation_model_1 = __importDefault(require("../conversations/conversation.model"));
 const register = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -133,3 +134,28 @@ const getListOfUsers = async (req, res) => {
     }
 };
 exports.getListOfUsers = getListOfUsers;
+const checkUnreadMessages = async (req, res) => {
+    try {
+        // Extract user ID, modify this based on your authentication setup
+        const userId = req.user.userId;
+        // Find a conversation where the user is a participant, they are not the sender,
+        // and they have not seen the message
+        const conversation = await conversation_model_1.default.findOne({
+            users: userId,
+            transcript: {
+                $elemMatch: {
+                    sender: { $ne: userId },
+                    seenBy: { $ne: userId }
+                }
+            }
+        });
+        // If such a conversation exists, the user has unread messages
+        const hasUnreadMessages = Boolean(conversation);
+        return res.status(201).json({ hasUnreadMessages });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+exports.checkUnreadMessages = checkUnreadMessages;
