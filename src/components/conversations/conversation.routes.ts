@@ -1,5 +1,5 @@
 import { Router } from "express";
-import authMiddleware from "../../auth/authMiddleWare";
+import authMiddleware from "../../auth/authMiddleware";
 import {
   getConversation,
   toggleUser,
