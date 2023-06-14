@@ -1,5 +1,5 @@
 import { Router } from "express";
-import authMiddleware from "../../auth/authMiddleWare.js";
+import authMiddleware from "../../auth/authMiddleWare";
 import {
   getConversation,
   toggleUser,
