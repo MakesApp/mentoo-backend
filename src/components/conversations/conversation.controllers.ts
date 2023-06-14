@@ -33,7 +33,6 @@ export const toggleUser = async (req: Request, res: Response) => {
 
 export const getChatPartners = async (req, res: Response) => {
   try {
-    
     // Assuming req.user._id contains the authenticated user's ID
     const userId: mongoose.Types.ObjectId = req.user.userId;
 
@@ -41,27 +40,31 @@ export const getChatPartners = async (req, res: Response) => {
     const conversations = await Conversation.find({ users: userId }).populate('users', '-password');
 
     let users:IUser[] = [];
-    conversations.forEach(conversation => {
+    await Promise.all(conversations.map(async conversation => {
       // Iterate over each conversation's users array
-      conversation.users.forEach((user:any) => {
+      await Promise.all(conversation.users.map(async (user:any) => {
         // If the user is not the authenticated user and not already included, add them to the users array
         if (user._id.toString() !== userId.toString() && !users.some((u:any) => u._id.toString() === user._id.toString())) {
-          users.push(user);
+          // Check for any unread messages from this user
+          const unreadConversation = await Conversation.findOne({
+            users: { $in: [user._id, userId] },
+            transcript: {
+              $elemMatch: {
+                sender: user._id,
+                seenBy: { $ne: userId }
+              }
+            }
+          });
+          
+          const hasUnreadMessages = Boolean(unreadConversation);
+          users.push({ ...user._doc, hasUnreadMessages });
         }
-      });
-    });
+      }));
+    }));
 
-    res.json(users); // Returns a list of users (with their data) the authenticated user had a conversation with
+    res.json(users); // Returns a list of users (with their data and unread message status) the authenticated user had a conversation with
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
-
-
-
-
-
-
-
-

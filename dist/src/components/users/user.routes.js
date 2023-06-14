@@ -11,6 +11,6 @@ router.post("/user/register", user_controllers_1.register);
 router.post("/user/login", user_controllers_1.login);
 router.get("/user/auth", authMiddleWare_1.default, user_controllers_1.getUser);
 router.get("/user/logout", authMiddleWare_1.default, user_controllers_1.logout);
-router.post("/user/getUsers", authMiddleWare_1.default, user_controllers_1.getListOfUsers);
+router.post("/users/getUsers", authMiddleWare_1.default, user_controllers_1.getListOfUsers);
 router.get("/user/has-unread-messages", authMiddleWare_1.default, user_controllers_1.checkUnreadMessages);
 exports.default = router;

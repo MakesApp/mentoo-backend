@@ -10,7 +10,7 @@ router.post("/user/register", register);
 router.post("/user/login", login);
 router.get("/user/auth",authMiddleware,getUser)
 router.get("/user/logout",authMiddleware,logout)
-router.post("/user/getUsers",authMiddleware,getListOfUsers)
+router.post("/users/getUsers",authMiddleware,getListOfUsers)
 router.get("/user/has-unread-messages",authMiddleware, checkUnreadMessages);
 
 export default router;

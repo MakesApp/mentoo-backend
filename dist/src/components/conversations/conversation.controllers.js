@@ -36,16 +36,27 @@ const getChatPartners = async (req, res) => {
         // Find all conversations where the authenticated user is a participant
         const conversations = await conversation_model_1.default.find({ users: userId }).populate('users', '-password');
         let users = [];
-        conversations.forEach(conversation => {
+        await Promise.all(conversations.map(async (conversation) => {
             // Iterate over each conversation's users array
-            conversation.users.forEach((user) => {
+            await Promise.all(conversation.users.map(async (user) => {
                 // If the user is not the authenticated user and not already included, add them to the users array
                 if (user._id.toString() !== userId.toString() && !users.some((u) => u._id.toString() === user._id.toString())) {
-                    users.push(user);
+                    // Check for any unread messages from this user
+                    const unreadConversation = await conversation_model_1.default.findOne({
+                        users: { $in: [user._id, userId] },
+                        transcript: {
+                            $elemMatch: {
+                                sender: user._id,
+                                seenBy: { $ne: userId }
+                            }
+                        }
+                    });
+                    const hasUnreadMessages = Boolean(unreadConversation);
+                    users.push({ ...user._doc, hasUnreadMessages });
                 }
-            });
-        });
-        res.json(users); // Returns a list of users (with their data) the authenticated user had a conversation with
+            }));
+        }));
+        res.json(users); // Returns a list of users (with their data and unread message status) the authenticated user had a conversation with
     }
     catch (error) {
         console.error(error);

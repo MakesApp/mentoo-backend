@@ -174,7 +174,7 @@ export const checkUnreadMessages = async (req, res: Response) => {
 
     // If such a conversation exists, the user has unread messages
     const hasUnreadMessages = Boolean(conversation);
-    return res.status(201).json({hasUnreadMessages});
+    return res.status(200).json({hasUnreadMessages});
 
   } catch (error) {
     console.error(error);
