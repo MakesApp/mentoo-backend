@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import User, { IUser }  from "./user.models";
 import { jwtSecret } from "../../config/jwtConfig";
-import { base } from "../../services/Airtable/AirtableConfig";
+// import { base } from "../../services/Airtable/AirtableConfig";
 import mongoose from "mongoose";
 import Conversation from "../conversations/conversation.model";
 
@@ -18,13 +18,13 @@ export const register = async (req: Request, res: Response) => {
     }
 
     // Check if the email is already registered in Airtable
-    const usersInAirtable = await base('contacts').select({
-      filterByFormula: `{Email} = '${email}'`,
-    }).all();
+    // const usersInAirtable = await base('contacts').select({
+    //   filterByFormula: `{Email} = '${email}'`,
+    // }).all();
 
-    if (usersInAirtable.length === 0) {
-      return res.status(409).json({ message: "איימיל זה לא קיים במאגר המתנדבים" });
-    }
+    // if (usersInAirtable.length === 0) {
+    //   return res.status(409).json({ message: "איימיל זה לא קיים במאגר המתנדבים" });
+    // }
 
     // Check if the email is already registered in MongoDB
     const existingUser = await User.findOne({ email });
