@@ -85,7 +85,7 @@ let conversation = await Conversation.findOne({ room });
     socket.on('disconnect', () => {
     });
 });
-socketServer.listen(8080, () => {
-  console.log("socket server run on port 8080");
+socketServer.listen(process.env.SOCKET_PORT||8080, () => {
+  console.log("socket server run on port ",process.env.SOCKET_PORT||8080);
 });
 
