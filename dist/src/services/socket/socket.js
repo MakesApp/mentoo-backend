@@ -102,6 +102,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
     });
 });
-socketServer.listen(8080, () => {
-    console.log("socket server run on port 8080");
+console.log(process.env.EXPRESS_PORT, process.env.SOCKET_PORT);
+socketServer.listen(process.env.SOCKET_PORT || 8080, () => {
+    console.log("socket server run on port ", process.env.SOCKET_PORT || 8080);
 });

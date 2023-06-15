@@ -9,7 +9,8 @@ import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 dotenv.config();
 
-const PORT = process.env.PORT || 9000;
+
+const PORT = process.env.EXPRESS_PORT || 9000;
 
 const app = express();
 

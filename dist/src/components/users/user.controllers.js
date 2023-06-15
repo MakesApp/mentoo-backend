@@ -8,7 +8,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_models_1 = __importDefault(require("./user.models"));
 const jwtConfig_1 = require("../../config/jwtConfig");
-const AirtableConfig_1 = require("../../services/Airtable/AirtableConfig");
 const conversation_model_1 = __importDefault(require("../conversations/conversation.model"));
 const register = async (req, res) => {
     const { email, password } = req.body;
@@ -17,12 +16,12 @@ const register = async (req, res) => {
             return res.status(409).json({ message: "אחד השדות חסרים" });
         }
         // Check if the email is already registered in Airtable
-        const usersInAirtable = await (0, AirtableConfig_1.base)('contacts').select({
-            filterByFormula: `{Email} = '${email}'`,
-        }).all();
-        if (usersInAirtable.length === 0) {
-            return res.status(409).json({ message: "איימיל זה לא קיים במאגר המתנדבים" });
-        }
+        // const usersInAirtable = await base('contacts').select({
+        //   filterByFormula: `{Email} = '${email}'`,
+        // }).all();
+        // if (usersInAirtable.length === 0) {
+        //   return res.status(409).json({ message: "איימיל זה לא קיים במאגר המתנדבים" });
+        // }
         // Check if the email is already registered in MongoDB
         const existingUser = await user_models_1.default.findOne({ email });
         if (existingUser) {

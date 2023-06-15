@@ -13,7 +13,7 @@ require("./src/services/socket/socket");
 const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 dotenv_1.default.config();
-const PORT = process.env.PORT || 9000;
+const PORT = process.env.EXPRESS_PORT || 9000;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
