@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+  res.header('Access-Control-Allow-Origin', 'https://mentoo-frontend-ibocblfdy-mentoo.vercel.app');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
   res.header('Access-Control-Expose-Headers', 'Content-Length');
@@ -29,6 +29,7 @@ app.use((req, res, next) => {
   );
   next();
 });
+
 
 
 app.use("/api", userRouter);
