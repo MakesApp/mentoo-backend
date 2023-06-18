@@ -18,12 +18,12 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+    res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL || '*');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
     res.header('Access-Control-Expose-Headers', 'Content-Length');
     res.header('Access-Control-Allow-Headers', 'Accept, Authorization, Content-Type, X-Requested-With, Range');
-    next();
+    // next();
 });
 app.use("/api", user_routes_1.default);
 app.use("/api", place_routes_1.default);

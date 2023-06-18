@@ -9,7 +9,7 @@ const socketServer = server.createServer(app);
 
 const io = new Server(socketServer, {
   cors: {
-    origin: [process.env.CLIENT_URL,"*"],
+    origin: [`${process.env.CLIENT_URL}`,"*"],
     methods: ["GET", "POST"],
     // credentials: true
   },

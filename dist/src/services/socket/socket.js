@@ -35,7 +35,7 @@ const app = (0, express_1.default)();
 const socketServer = http_1.default.createServer(app);
 const io = new socket_io_1.Server(socketServer, {
     cors: {
-        origin: "*",
+        origin: [`${process.env.CLIENT_URL}`, "*"],
         methods: ["GET", "POST"],
         // credentials: true
     },
@@ -102,7 +102,6 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
     });
 });
-console.log(process.env.EXPRESS_PORT, process.env.SOCKET_PORT);
 socketServer.listen(process.env.SOCKET_PORT || 8080, () => {
     console.log("socket server run on port ", process.env.SOCKET_PORT || 8080);
 });
