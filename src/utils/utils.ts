@@ -1,20 +1,26 @@
-import { ObjectId } from "mongodb";
-import Conversation from "../components/conversations/conversation.model";
 
-export const addMsgToConversation = async (
-  userId: ObjectId,
-  placeId: ObjectId,
-  msg: string,
-  isOpened: boolean
-) => {
-  const message = { sender: userId, message: msg, isOpened };
-  try {
-    await Conversation.findOneAndUpdate(
-      { userId, placeId },
-      { $push: { transcript: message } },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
-  } catch (err) {
-    console.log(err);
-  }
+import Conversation from "../components/conversations/conversation.model"
+export const fetchUsersWithUnreadMessages = async (userArray) => {
+  
+  const users = await Promise.all(
+    userArray.map(async (user) => {
+      const conversation = await Conversation.findOne({ users: user._id }).populate("transcript.sender");
+
+      if (!conversation) {
+          return {
+            ...user.toObject(),
+            hasUnreadMessages: false,
+          };
+      }
+
+      const unreadMessages = conversation?.transcript.filter((message) => !message.seenBy);
+
+        return {
+          ...user.toObject(),
+          hasUnreadMessages: unreadMessages ? unreadMessages.length > 0 : false,
+        };
+    })
+  );
+
+  return users;
 };

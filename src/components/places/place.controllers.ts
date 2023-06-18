@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Place from "./place.models";
-
+import {fetchUsersWithUnreadMessages} from '../../utils/utils'
 
 export const getPlaces = async (req: Request, res: Response) => {
   try{
@@ -16,9 +16,21 @@ export const getPlaces = async (req: Request, res: Response) => {
 export const getPlaceById=async (req: Request, res: Response) => {
   try{
     const {placeId}=req.params;
-    const place=await Place.findById(placeId)
+    let place=await Place.findById(placeId).populate('myVolunteers').populate('candidateVolunteers').populate('oldVolunteers')
       .exec();
-    res.status(201).json({ place});
+      if(!place)
+      throw new Error('')
+
+    const myVolunteersWithUnreadMessages = await fetchUsersWithUnreadMessages(place.myVolunteers);
+    const oldVolunteersWithUnreadMessages = await fetchUsersWithUnreadMessages(place.oldVolunteers);
+    const candidateVolunteersWithUnreadMessages = await fetchUsersWithUnreadMessages(place.candidateVolunteers);
+
+
+    res.status(201).json({place:{ ...place._doc,
+    myVolunteers:[...myVolunteersWithUnreadMessages],
+    oldVolunteers:[...oldVolunteersWithUnreadMessages],
+    candidateVolunteers:[...candidateVolunteersWithUnreadMessages]
+    }});
   }
   catch(error){
     console.error("Fetching place by id Error :", error);
@@ -31,7 +43,6 @@ export const updateVolunteerList=async (req: Request, res: Response) => {
   const {placeId}=req.params;
   const {query}=req.body;
   try{
-console.log(req.body);
 
   const updatedDoc=  await Place.findByIdAndUpdate(placeId,query,{new:true})
 

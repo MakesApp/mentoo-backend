@@ -11,6 +11,7 @@ export interface IPlace extends Document {
   myVolunteers: Schema.Types.ObjectId[];
   candidateVolunteers: Schema.Types.ObjectId[];
   oldVolunteers: Schema.Types.ObjectId[];
+  _doc?:any;
 }
 
 const placeSchema: Schema<IPlace> = new mongoose.Schema<IPlace>({
