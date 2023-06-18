@@ -124,12 +124,29 @@ exports.logout = logout;
 const getListOfUsers = async (req, res) => {
     const { list } = req.body;
     try {
-        const users = await Promise.all(list.map(async (user) => await user_models_1.default.findById(user)));
+        const users = await Promise.all(list.map(async (user) => {
+            const conversation = await conversation_model_1.default.findOne({ users: user }).populate("transcript.sender");
+            if (!conversation) {
+                const userData = await user_models_1.default.findById(user).select("-password"); // Assuming you have a User model
+                if (userData)
+                    return {
+                        ...userData.toObject(),
+                        hasUnreadMessages: false,
+                    };
+            }
+            const unreadMessages = conversation?.transcript.filter((message) => !message.seenBy);
+            const userData = await user_models_1.default.findById(user).select("-password"); // Assuming you have a User model
+            if (userData)
+                return {
+                    ...userData.toObject(),
+                    hasUnreadMessages: unreadMessages ? unreadMessages.length > 0 : false,
+                };
+        }));
         res.status(200).json({ users });
     }
     catch (error) {
         console.error("Fetching users error:", error);
-        res.status(500).json({ error: "כשל במשיכת הנתונים" }); // Logout failed
+        res.status(500).json({ error: "כשל במשיכת הנתונים" });
     }
 };
 exports.getListOfUsers = getListOfUsers;

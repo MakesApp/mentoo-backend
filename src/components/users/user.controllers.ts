@@ -140,19 +140,38 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const getListOfUsers= async (req: Request, res: Response) => {
-  const {list}=req.body;
-  
-  try{
+ const { list } = req.body;
 
-    const users=await Promise.all(list.map(async user=>await User.findById(user)))
-    res.status(200).json({ users})
+try {
+  const users = await Promise.all(
+    list.map(async (user) => {
+      const conversation = await Conversation.findOne({ users: user }).populate("transcript.sender");
 
-  }
-  catch(error){
-    console.error("Fetching users error:", error);
-    res.status(500).json({ error: "כשל במשיכת הנתונים" }); // Logout failed
+      if (!conversation) {
+        const userData = await User.findById(user).select("-password"); // Assuming you have a User model
+        if(userData)
+        return {
+          ...userData.toObject(),
+          hasUnreadMessages: false,
+        };
+      }
+      const unreadMessages = conversation?.transcript.filter((message) => !message.seenBy);
 
-  }
+      const userData = await User.findById(user).select("-password"); // Assuming you have a User model
+      if(userData)
+      return {
+        ...userData.toObject(),
+        hasUnreadMessages:unreadMessages? unreadMessages.length > 0:false,
+      };
+    })
+  );
+
+  res.status(200).json({ users });
+} catch (error) {
+  console.error("Fetching users error:", error);
+  res.status(500).json({ error: "כשל במשיכת הנתונים" });
+}
+
 }
 
 export const checkUnreadMessages = async (req, res: Response) => {
