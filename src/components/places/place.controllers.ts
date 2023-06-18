@@ -31,6 +31,7 @@ export const updateVolunteerList=async (req: Request, res: Response) => {
   const {placeId}=req.params;
   const {query}=req.body;
   try{
+console.log(req.body);
 
   const updatedDoc=  await Place.findByIdAndUpdate(placeId,query,{new:true})
 
