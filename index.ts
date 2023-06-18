@@ -27,11 +27,14 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Headers',
     'Accept, Authorization, Content-Type, X-Requested-With, Range'
   );
-  // next();
+  next();
 });
 
 
-
+app.use('/',(req,res,next)=>{
+  console.log('get');
+  
+})
 
 app.use("/api", userRouter);
 app.use("/api", placeRouter);
