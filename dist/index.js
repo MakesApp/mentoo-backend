@@ -29,8 +29,8 @@ app.use("/api", user_routes_1.default);
 app.use("/api", place_routes_1.default);
 app.use("/api", conversation_routes_1.default);
 app.use("/api", notifications_routes_1.default);
-app.use('/api', () => {
-    console.log('gettt');
+app.use('/api', (_, res) => {
+    res.send('heelo');
 });
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
