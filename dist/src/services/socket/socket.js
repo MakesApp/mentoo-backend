@@ -33,9 +33,10 @@ const conversation_model_1 = __importStar(require("../../components/conversation
 const mongoose_1 = __importDefault(require("mongoose"));
 const app = (0, express_1.default)();
 const socketServer = http_1.default.createServer(app);
+console.log(process.env.CLIENT_URL);
 const io = new socket_io_1.Server(socketServer, {
     cors: {
-        origin: [`${process.env.CLIENT_URL}`, "*"],
+        origin: [`${process.env.CLIENT_URL}`],
         methods: ["GET", "POST"],
         // credentials: true
     },

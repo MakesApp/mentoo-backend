@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL||'*');
+  res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL);
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
   res.header('Access-Control-Expose-Headers', 'Content-Length');
@@ -31,19 +31,15 @@ app.use((req, res, next) => {
 });
 
 
-app.use('/',(req,res,next)=>{
-  console.log('get');
-  
-})
-
 app.use("/api", userRouter);
 app.use("/api", placeRouter);
 app.use("/api", conversationRouter);
 app.use("/api", notificationRouter);
 
-app.get("/", (req: express.Request, res: express.Response) => {
-  res.send("Hello World!");
-});
+app.use('/api',(_,res)=>{
+  res.send('heelo')
+  
+})
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
