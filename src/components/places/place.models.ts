@@ -7,7 +7,7 @@ export interface IPlace extends Document {
   description: string;
   audience: string;
   placeImage?: string;
-  userId: Schema.Types.ObjectId;
+  user: Schema.Types.ObjectId;
   myVolunteers: Schema.Types.ObjectId[];
   candidateVolunteers: Schema.Types.ObjectId[];
   oldVolunteers: Schema.Types.ObjectId[];
@@ -42,7 +42,7 @@ const placeSchema: Schema<IPlace> = new mongoose.Schema<IPlace>({
   placeImage:{
     type: String,
   },
-  userId:{
+  user:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User' 
   },

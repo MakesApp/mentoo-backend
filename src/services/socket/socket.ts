@@ -6,7 +6,6 @@ import Conversation, { Message } from "../../components/conversations/conversati
 import mongoose, { Schema } from 'mongoose'
 const app = express();
 const socketServer = server.createServer(app);
-console.log(process.env.CLIENT_URL);
 
 const io = new Server(socketServer, {
   cors: {
@@ -46,19 +45,23 @@ let conversation = await Conversation.findOne({ room });
   socket.on('chat message', async (msg, room) => {
     let conversation = await Conversation.findOne({ room });
     if (conversation) { // Add this check to ensure conversation is not null
-      
-      const newMessage = new Message({
+      const msgObj={
         _id: new mongoose.Types.ObjectId(),
         sender: new mongoose.Types.ObjectId(msg.sender),
         message: msg.message,
-      });
+        createdAt: new Date(), // Add the createdAt timestamp
+
+      }
+      const newMessage = new Message(msgObj);
+      console.log(newMessage);
+      
 
       // Add the new message to the transcript
       conversation.transcript.push(newMessage);
       await conversation.save();
 
       // Emit the new message to all users in the room
-      io.to(room).emit('chat message', msg);
+      io.to(room).emit('chat message', msgObj);
     }
   });
   

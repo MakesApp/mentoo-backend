@@ -5,7 +5,7 @@ import {fetchUsersWithUnreadMessages} from '../../utils/utils'
 export const getPlaces = async (req: Request, res: Response) => {
   try{
       
-    const places=await Place.find({}).exec();
+    const places=await Place.find({}).exec()
     res.status(201).json({ places});
   } catch (error) {
     console.error("Fetching places Error :", error);

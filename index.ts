@@ -38,7 +38,6 @@ app.use("/api", notificationRouter);
 
 app.use('/api',(_,res)=>{
   res.send('heelo')
-  
 })
 
 app.listen(PORT, () => {
