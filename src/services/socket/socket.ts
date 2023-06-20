@@ -53,7 +53,6 @@ let conversation = await Conversation.findOne({ room });
 
       }
       const newMessage = new Message(msgObj);
-      console.log(newMessage);
       
 
       // Add the new message to the transcript
