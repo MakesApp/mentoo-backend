@@ -4,7 +4,7 @@ import conversationRouter from "./src/components/conversations/conversation.rout
 import notificationRouter from "./src/components/notifications/notifications.routes";
 import placeRouter from './src/components/places/place.routes'
 import "./src/services/DB/mongoose";
-import "./src/services/socket/socket";
+// import "./src/services/socket/socket";
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 dotenv.config();
