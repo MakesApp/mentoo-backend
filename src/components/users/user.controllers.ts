@@ -89,7 +89,8 @@ export const login = async (req: Request, res: Response) => {
         });
         const modifiedUser = { role:user.role,...user.toObject(), password: undefined };
 
-     res.cookie("token", token, { httpOnly: true, secure: true });
+     res.cookie("token", token, { httpOnly: true, secure: true ,sameSite: 'none' // none, lax, or strict
+});
 
         res.status(200).send({ message: "ההתחברות בוצעה בהצלחה", user:modifiedUser ,token});
       } else {
