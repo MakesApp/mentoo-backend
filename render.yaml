@@ -1,0 +1,4 @@
+services:
+  - name: socket-server
+    port: 8000
+    startCommand: node ./src/services/socket/socket
