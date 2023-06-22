@@ -7,6 +7,8 @@ import mongoose, { Schema } from 'mongoose'
 const app = express();
 const socketServer = server.createServer(app);
 
+console.log(`${process.env.CLIENT_URL}`);
+
 const io = new Server(socketServer, {
   cors: {
     origin: [`${process.env.CLIENT_URL}`],
