@@ -63,6 +63,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+console.log(email, password);
 
   try {
       if (!email || !password) {
@@ -79,7 +80,7 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
     if (!user) {
        res.status(400).send({
-        message: "ההתחברות נכשלה: איימיל לא קיים , צריך להירשם",
+        message: "ההתחברות נכשלה: איימיל או סיסמה לא תקינים",
       });
     } else {
       const matchPassword = await bcrypt.compare(password, user.password);
