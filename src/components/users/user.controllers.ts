@@ -51,7 +51,7 @@ export const register = async (req: Request, res: Response) => {
     });
 
     // Set the token as a cookie
-    res.cookie("token", token, { httpOnly: true, secure: true,sameSite:"none" });
+    res.cookie("token", token, { httpOnly: true, secure: true });
 
     res.status(201).json({ user: savedUser, message: "ההרשמה בוצעה בהצלחה" });
   } catch (error) {
@@ -90,7 +90,8 @@ console.log(email, password);
         });
         const modifiedUser = { role:user.role,...user.toObject(), password: undefined };
 
-     res.cookie("token", token});
+     res.cookie("token", token, { httpOnly: true, secure: true ,sameSite: 'none' // none, lax, or strict
+});
 
         res.status(200).send({ message: "ההתחברות בוצעה בהצלחה", user:modifiedUser ,token});
       } else {
