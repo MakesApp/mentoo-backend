@@ -90,7 +90,7 @@ console.log(email, password);
         });
         const modifiedUser = { role:user.role,...user.toObject(), password: undefined };
 
-     res.cookie("token", token, { httpOnly: true, secure: true ,sameSite: 'none' ,domain:process.env.CLIENT_URL});
+     res.cookie("token", token, { httpOnly: true, secure: true ,sameSite: 'none' });
 
         res.status(200).send({ message: "ההתחברות בוצעה בהצלחה", user:modifiedUser ,token});
       } else {
