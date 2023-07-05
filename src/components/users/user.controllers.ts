@@ -51,7 +51,7 @@ export const register = async (req: Request, res: Response) => {
     });
 
     // Set the token as a cookie
-    res.cookie("token", token);
+    res.cookie("token", token, { httpOnly: true, secure: true,sameSite:"none" });
 
     res.status(201).json({ user: savedUser, message: "ההרשמה בוצעה בהצלחה" });
   } catch (error) {
