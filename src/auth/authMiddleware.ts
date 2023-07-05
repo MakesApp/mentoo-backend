@@ -8,8 +8,7 @@ interface RequestWithUser extends Request {
 
 const authMiddleware = (req: RequestWithUser, res: Response, next: NextFunction): void => {
   
-  const token = req.cookies.token;
-  
+    const token = req.header('Authorization');  
   if (!token) {
     res.status(401).json({ message: "No token, authorization denied." });
     return;
