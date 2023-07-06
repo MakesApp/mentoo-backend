@@ -55,7 +55,7 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  socket.on('join room', async(room, userId,partnerId) => {
+  socket.on('join room', async(room, userId, partnerId) => {
     socket.join(room);
     let conversation = await Conversation.findOne({ room });
     if (!conversation) {
@@ -69,8 +69,26 @@ io.on('connection', (socket) => {
     }
     if (conversation) {
       socket.emit('chat history', conversation.transcript);
+
+      // Check for messages that haven't been seen by this user
+      const unseenMessageIds = conversation.transcript
+        .filter(msg => !msg.seenBy || msg.seenBy.toString() !== userId)
+        .map(msg => msg._id);
+
+      if (unseenMessageIds.length > 0) {
+        // Emit 'messages seen' event for those messages
+          unseenMessageIds.forEach(messageId => {
+          const message = conversation?.transcript.find((msg) => msg._id.toString() === messageId.toString());
+          if (message && !message.seenBy) {
+            message.seenBy = new mongoose.Types.ObjectId(userId);
+          }
+        });
+        await conversation.save();
+         io.to(room).emit('messages seen', unseenMessageIds, room, userId);
+      }
     }
   });
+
 socket.on('chat message', async (msg, room) => {
   let conversation = await Conversation.findOne({ room });
   if (conversation) {
@@ -105,24 +123,6 @@ socket.on('chat message', async (msg, room) => {
 });
 
   
-  socket.on('messages seen', async (messageIds, room, userId) => {
-    try {
-      const conversation = await Conversation.findOne({ room });
-      if (conversation) {
-        messageIds.forEach(messageId => {
-          const message = conversation.transcript.find((msg) => msg._id.toString() === messageId);
-          if (message && !message.seenBy) {
-            message.seenBy = new mongoose.Types.ObjectId(userId);
-          }
-        });
-        await conversation.save();
-        io.to(room).emit('messages seen', messageIds);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  });
-
   socket.on('disconnect', () => {
     // Handle socket disconnection logic
   });

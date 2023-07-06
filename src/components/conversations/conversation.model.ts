@@ -13,7 +13,6 @@ const messageSchema: Schema<IMessage> = new Schema<IMessage>(
     sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
     message: {
       type: String,
-      required: true,
     },
     seenBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
