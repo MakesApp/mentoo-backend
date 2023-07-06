@@ -80,11 +80,13 @@ console.log(email, password);
     const user = await User.findOne({ email });
     if (!user) {
        res.status(400).send({
-        message: "ההתחברות נכשלה: איימיל או סיסמה לא תקינים",
+        message: "ההתחברות נכשלה: איימיל לא קיים",
       });
     } else {
       const matchPassword = await bcrypt.compare(password, user.password);
+
       if (matchPassword) {
+        
         const token = jwt.sign({ userId:user._id ,role:user.role}, jwtSecret, {
           expiresIn: "1h",
         });

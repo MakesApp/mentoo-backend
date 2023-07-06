@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 import Conversation, { Message } from "./src/components/conversations/conversation.model";
 import mongoose from "mongoose";
+import Place from './src/components/places/place.models'
 dotenv.config();
 
 
@@ -70,22 +71,39 @@ io.on('connection', (socket) => {
       socket.emit('chat history', conversation.transcript);
     }
   });
+socket.on('chat message', async (msg, room) => {
+  let conversation = await Conversation.findOne({ room });
+  if (conversation) {
+    const msgObj = {
+      _id: new mongoose.Types.ObjectId(),
+      sender: new mongoose.Types.ObjectId(msg.sender),
+      message: msg.message,
+      createdAt: new Date(),
+    };
+    const newMessage = new Message(msgObj);
+    conversation.transcript.push(newMessage);
 
-  socket.on('chat message', async (msg, room) => {
-    let conversation = await Conversation.findOne({ room });
-    if (conversation) {
-      const msgObj = {
-        _id: new mongoose.Types.ObjectId(),
-        sender: new mongoose.Types.ObjectId(msg.sender),
-        message: msg.message,
-        createdAt: new Date(),
-      };
-      const newMessage = new Message(msgObj);
-      conversation.transcript.push(newMessage);
-      await conversation.save();
-      io.to(room).emit('chat message', msgObj);
+    // Check if the sender is a volunteer and this is their first message
+    if (msg.role === 'volunteer') {
+      
+
+        // Fetch the place and add the sender to the candidateVolunteers array
+        let place = await Place.findOne({ user: conversation.users.find(id => id.toString() !== msg.sender) });
+        if (place) {
+
+          // Ensure the user is not already in candidateVolunteers, myVolunteers or oldVolunteers
+          if (!place.candidateVolunteers.includes(msg.sender) && !place.myVolunteers.includes(msg.sender) && !place.oldVolunteers.includes(msg.sender)) {
+            place.candidateVolunteers.push(msg.sender);
+            await place.save();
+          }
+        }
     }
-  });
+
+    await conversation.save();
+    io.to(room).emit('chat message', msgObj);
+  }
+});
+
   
   socket.on('messages seen', async (messageIds, room, userId) => {
     try {
