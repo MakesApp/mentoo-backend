@@ -68,11 +68,9 @@ io.on('connection', (socket) => {
       }
     }
     if (conversation) {
-      socket.emit('chat history', conversation.transcript);
-
       // Check for messages that haven't been seen by this user
       const unseenMessageIds = conversation.transcript
-        .filter(msg => !msg.seenBy || msg.seenBy.toString() !== userId)
+        .filter(msg => !msg.seenBy && msg.sender.toString()!==userId)
         .map(msg => msg._id);
 
       if (unseenMessageIds.length > 0) {
@@ -80,13 +78,16 @@ io.on('connection', (socket) => {
           unseenMessageIds.forEach(messageId => {
           const message = conversation?.transcript.find((msg) => msg._id.toString() === messageId.toString());
           if (message && !message.seenBy) {
+            console.log(userId);
+            
             message.seenBy = new mongoose.Types.ObjectId(userId);
           }
         });
         await conversation.save();
-         io.to(room).emit('messages seen', unseenMessageIds, room, userId);
       }
     }
+     io.to(room).emit('all messages', conversation.transcript);
+
   });
 
 socket.on('chat message', async (msg, room) => {
