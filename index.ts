@@ -53,8 +53,8 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-
 io.on('connection', (socket) => {
+
   socket.on('join room', async(room, userId, partnerId) => {
     socket.join(room);
     let conversation = await Conversation.findOne({ room });
@@ -67,66 +67,55 @@ io.on('connection', (socket) => {
         await conversation.save();
       }
     }
-    if (conversation) {
-      // Check for messages that haven't been seen by this user
-      const unseenMessageIds = conversation.transcript
-        .filter(msg => !msg.seenBy && msg.sender.toString()!==userId)
-        .map(msg => msg._id);
 
-      if (unseenMessageIds.length > 0) {
-        // Emit 'messages seen' event for those messages
-          unseenMessageIds.forEach(messageId => {
-          const message = conversation?.transcript.find((msg) => msg._id.toString() === messageId.toString());
-          if (message && !message.seenBy) {
-            console.log(userId);
-            
-            message.seenBy = new mongoose.Types.ObjectId(userId);
-          }
-        });
-        await conversation.save();
-      }
-    }
-     io.to(room).emit('all messages', conversation.transcript);
-
+    io.to(room).emit('all messages', conversation.transcript);
   });
 
-socket.on('chat message', async (msg, room) => {
-  let conversation = await Conversation.findOne({ room });
-  if (conversation) {
-    const msgObj = {
-      _id: new mongoose.Types.ObjectId(),
-      sender: new mongoose.Types.ObjectId(msg.sender),
-      message: msg.message,
-      createdAt: new Date(),
-    };
-    const newMessage = new Message(msgObj);
-    conversation.transcript.push(newMessage);
+  socket.on('chat message', async (msg, room) => {
+    let conversation = await Conversation.findOne({ room });
+    if (conversation) {
+      const msgObj = {
+        _id: new mongoose.Types.ObjectId(),
+        sender: new mongoose.Types.ObjectId(msg.sender),
+        message: msg.message,
+        createdAt: new Date(),
+      };
+      const newMessage = new Message(msgObj);
+      conversation.transcript.push(newMessage);
 
-    // Check if the sender is a volunteer and this is their first message
-    if (msg.role === 'volunteer') {
-      
-
+      // Check if the sender is a volunteer and this is their first message
+      if (msg.role === 'volunteer') {
         // Fetch the place and add the sender to the candidateVolunteers array
         let place = await Place.findOne({ user: conversation.users.find(id => id.toString() !== msg.sender) });
         if (place) {
-
           // Ensure the user is not already in candidateVolunteers, myVolunteers or oldVolunteers
           if (!place.candidateVolunteers.includes(msg.sender) && !place.myVolunteers.includes(msg.sender) && !place.oldVolunteers.includes(msg.sender)) {
             place.candidateVolunteers.push(msg.sender);
             await place.save();
           }
         }
+      }
+
+      await conversation.save();
+      io.to(room).emit('chat message', msgObj);
     }
+  });
 
-    await conversation.save();
-    io.to(room).emit('chat message', msgObj);
-  }
-});
-
+  socket.on('mark as seen', async (userId, roomId) => {
+    let conversation = await Conversation.findOne({ room: roomId });
+    if(conversation) {
+      // Find unseen messages
+      const unseenMessages = conversation.transcript.filter(msg => !msg.seenBy && msg.sender.toString() !== userId);
+      // Update seen status
+      
+      unseenMessages.forEach(msg => {
+        msg.seenBy = new mongoose.Types.ObjectId(userId);
+      });
+      await conversation.save();
+    }
+  });
   
   socket.on('disconnect', () => {
     // Handle socket disconnection logic
   });
 });
-
-
