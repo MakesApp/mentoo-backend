@@ -7,7 +7,10 @@ export interface IUser extends Document {
   role: string;
   avatar?: string; // avatar is optional
   fullName: string;
-  placeId?: Schema.Types.ObjectId; // placeId is optional
+  places?: [Schema.Types.ObjectId]; // placeId is optional
+  myVolunteers: Schema.Types.ObjectId[];
+  candidateVolunteers: Schema.Types.ObjectId[];
+  oldVolunteers: Schema.Types.ObjectId[];
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema<IUser>({
@@ -43,12 +46,25 @@ const userSchema: Schema<IUser> = new mongoose.Schema<IUser>({
     default: "",
     trim: true,
   },
-  placeId:{
+  places:[{
     type: Schema.Types.ObjectId,
     ref: 'Place',
-
-    // No default value, it will be undefined if not provided
-  }
+  }],
+  myVolunteers:{
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    default: [] 
+  },
+  candidateVolunteers:{
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    default: [] 
+  },
+  oldVolunteers:{
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    default: [] 
+  },
 });
 
 const User = mongoose.model<IUser>("User", userSchema);

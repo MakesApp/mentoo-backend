@@ -16,21 +16,11 @@ export const getPlaces = async (req: Request, res: Response) => {
 export const getPlaceById=async (req: Request, res: Response) => {
   try{
     const {placeId}=req.params;
-    let place=await Place.findById(placeId).populate('myVolunteers').populate('candidateVolunteers').populate('oldVolunteers')
-      .exec();
+    let place=await Place.findById(placeId).lean();
       if(!place)
       throw new Error('')
 
-    const myVolunteersWithUnreadMessages = await fetchUsersWithUnreadMessages(place.myVolunteers);
-    const oldVolunteersWithUnreadMessages = await fetchUsersWithUnreadMessages(place.oldVolunteers);
-    const candidateVolunteersWithUnreadMessages = await fetchUsersWithUnreadMessages(place.candidateVolunteers);
-
-
-    res.status(201).json({place:{ ...place._doc,
-    myVolunteers:[...myVolunteersWithUnreadMessages],
-    oldVolunteers:[...oldVolunteersWithUnreadMessages],
-    candidateVolunteers:[...candidateVolunteersWithUnreadMessages]
-    }});
+    res.status(201).json({place});
   }
   catch(error){
     console.error("Fetching place by id Error :", error);
@@ -39,20 +29,20 @@ export const getPlaceById=async (req: Request, res: Response) => {
   }
 };
 
-export const updateVolunteerList=async (req: Request, res: Response) => {
-  const {placeId}=req.params;
-  const {query}=req.body;
-  try{
+// export const updateVolunteerList=async (req: Request, res: Response) => {
+//   const {placeId}=req.params;
+//   const {query}=req.body;
+//   try{
 
-  const updatedDoc=  await Place.findByIdAndUpdate(placeId,query,{new:true})
+//   const updatedDoc=  await Place.findByIdAndUpdate(placeId,query,{new:true})
 
-      res.status(201).json({ place:updatedDoc});
+//       res.status(201).json({ place:updatedDoc});
 
-  }
+//   }
 
-  catch(error){
-    console.error("Updating place Error :", error);
-    res.status(500).json({ error: "כשל בעדכון הנתונים" });
+//   catch(error){
+//     console.error("Updating place Error :", error);
+//     res.status(500).json({ error: "כשל בעדכון הנתונים" });
 
-  }
-}
+//   }
+// }

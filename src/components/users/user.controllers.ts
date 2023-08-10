@@ -63,7 +63,6 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-console.log(email, password);
 
   try {
       if (!email || !password) {
@@ -109,7 +108,7 @@ export const getUser = async (req, res: Response): Promise<void> => {
   
 
   try {
-  const user = await User.findById(userId)
+  const user = await User.findById(userId).populate('myVolunteers').populate('oldVolunteers').populate('candidateVolunteers').select('-password');
  
 
     if (!user) {
@@ -118,10 +117,8 @@ export const getUser = async (req, res: Response): Promise<void> => {
     }
 
     // Don't send the password back
-    const userResponse: Partial<IUser> = user.toObject();
-    userResponse.password = undefined;
 
-    res.json(userResponse);
+    res.json(user);
   } catch(err) {
     console.error(err);
     res.status(500).json({ message: 'Error fetching user' });
@@ -207,7 +204,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
   try {
 
-    const user = await User.findById(userId).populate('placeId').select("-password");
+    const user = await User.findById(userId).select("-password");
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
@@ -220,3 +217,22 @@ export const getUserById = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch user" });
   }
 };
+
+
+export const updateVolunteerList=async (req: Request, res: Response) => {
+  const {userId}=req.params;
+  const {query}=req.body;
+  try{
+
+  const updatedDoc=  await User.findByIdAndUpdate(userId,query,{new:true})
+
+res.status(201).json({ user:updatedDoc});
+
+  }
+
+  catch(error){
+    console.error("Updating place Error :", error);
+    res.status(500).json({ error: "כשל בעדכון הנתונים" });
+
+  }
+}

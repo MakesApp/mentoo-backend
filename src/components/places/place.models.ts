@@ -8,9 +8,6 @@ export interface IPlace extends Document {
   audience: string;
   placeImage?: string;
   user: Schema.Types.ObjectId;
-  myVolunteers: Schema.Types.ObjectId[];
-  candidateVolunteers: Schema.Types.ObjectId[];
-  oldVolunteers: Schema.Types.ObjectId[];
   _doc?:any;
 }
 
@@ -46,21 +43,7 @@ const placeSchema: Schema<IPlace> = new mongoose.Schema<IPlace>({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User' 
   },
-  myVolunteers:{
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'User',
-    default: [] 
-  },
-  candidateVolunteers:{
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'User',
-    default: [] 
-  },
-  oldVolunteers:{
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'User',
-    default: [] 
-  },
+  
 });
 
 const Place = mongoose.model<IPlace>("Place", placeSchema);

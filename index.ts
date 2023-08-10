@@ -10,7 +10,7 @@ import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 import Conversation, { Message } from "./src/components/conversations/conversation.model";
 import mongoose from "mongoose";
-import Place from './src/components/places/place.models'
+import User from './src/components/users/user.models'
 dotenv.config();
 
 
@@ -86,12 +86,13 @@ io.on('connection', (socket) => {
       // Check if the sender is a volunteer and this is their first message
       if (msg.role === 'volunteer') {
         // Fetch the place and add the sender to the candidateVolunteers array
-        let place = await Place.findOne({ user: conversation.users.find(id => id.toString() !== msg.sender) });
-        if (place) {
+        
+        let user = await User.findOne({ _id:conversation.users.find(id => id.toString() !== msg.sender) });
+        if (user) {
           // Ensure the user is not already in candidateVolunteers, myVolunteers or oldVolunteers
-          if (!place.candidateVolunteers.includes(msg.sender) && !place.myVolunteers.includes(msg.sender) && !place.oldVolunteers.includes(msg.sender)) {
-            place.candidateVolunteers.push(msg.sender);
-            await place.save();
+          if (!user.candidateVolunteers.includes(msg.sender) && !user.myVolunteers.includes(msg.sender) && !user.oldVolunteers.includes(msg.sender)) {
+            user.candidateVolunteers.push(msg.sender);
+            await user.save();
           }
         }
       }
